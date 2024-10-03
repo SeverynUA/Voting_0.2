@@ -1,0 +1,39 @@
+﻿@using Voting_0._2.Models.DTOs.Account
+@model LoginModel
+
+<h2>Вхід як Організатор</h2>
+
+<form asp-action="LoginOrganizator" method="post">
+    <div class="form-group">
+        <label asp-for="Email">Email:</label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Password">Пароль:</label>
+        <input asp-for="Password" type="password" class="form-control" />
+        <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <div class="checkbox">
+            <label>
+                <input asp-for="RememberMe" /> Запам'ятати мене
+            </label>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Увійти як Організатор</button>
+
+    <div class="text-danger">
+        @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+    </div>
+</form>
+
+<p>Якщо ви ще не маєте облікового запису рганізатора, <a href="@Url.Action("RegisterOrganizator", "OrganizatorAccount")">зареєструйтеся тут</a>.</p>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

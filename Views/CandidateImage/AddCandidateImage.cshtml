@@ -1,0 +1,10 @@
+﻿@using Voting_0._2.Models.Voting_m.Candidat_m
+@model Image
+
+<form asp-action="AddCandidateImage" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="imageFile">Завантажити зображення:</label>
+        <input type="file" class="form-control" id="imageFile" name="imageFile" />
+    </div>
+    <button type="submit" class="btn btn-primary">Додати зображення</button>
+</form>

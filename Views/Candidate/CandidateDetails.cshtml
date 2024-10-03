@@ -1,0 +1,30 @@
+﻿@using Voting_0._2.Models.Voting_m.Candidat_m
+@model Candidat
+
+<div class="candidate-details">
+    <h2>Деталі кандидата</h2>
+
+    <div class="candidate-info">
+        <p><strong>Ім'я:</strong> @Model.Name</p>
+        <p><strong>Опис:</strong> @Model.Description</p>
+        <p><strong>Кількість голосів:</strong> @Model.VoteCount</p>
+
+        @if (Model.Image != null)
+        {
+            <div class="candidate-image">
+                <h4>Зображення:</h4>
+                <img src="data:image/png;base64,@(Convert.ToBase64String(Model.Image.ImageData))" alt="Image of @Model.Name" class="img-fluid" />
+            </div>
+        }
+        else
+        {
+            <p>Зображення відсутнє</p>
+        }
+    </div>
+
+    <!-- Кнопка для редагування -->
+    <a href="@Url.Action("EditCandidate", "Candidate", new { candidateId = Model.Id })" class="btn btn-primary">Редагувати</a>
+
+    <!-- Кнопка для додавання зображення -->
+    <a href="@Url.Action("AddCandidateImage", "CandidateImage", new { candidateId = Model.Id })" class="btn btn-secondary">Додати зображення</a>
+</div>

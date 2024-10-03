@@ -1,0 +1,47 @@
+﻿<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script src="~/js/admin-access.js"></script>
+
+
+<!-- Кнопка для відкриття модального вікна для адміністратора -->
+<a href="#" class="btn btn-primary" data-toggle="modal" data-target="#adminAccessModal">Вхід як Адміністратор</a>
+<a href="@Url.Action("LoginOrganizator", "OrganizatorAccount")" class="btn btn-secondary">Вхід як Організатор</a>
+
+<!-- Модальне вікно для введення коду доступу адміністратора -->
+<div class="modal fade" id="adminAccessModal" tabindex="-1" role="dialog" aria-labelledby="adminAccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="adminAccessModalLabel">Введіть код доступу для адміністратора</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="adminAccessForm" method="post" action="@Url.Action("EnterAdminAccessCode", "Auth")">
+                    <div class="form-group">
+                        <label for="accessCode">Код доступу:</label>
+                        <input type="text" id="accessCode" name="accessCode" class="form-control" required />
+                    </div>
+                    <div id="errorMessage" class="text-danger"></div>
+                    <button type="submit" class="btn btn-primary" id="submitAdminCode">Перевірити код</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Форма для виборця -->
+<form asp-action="LoginVoter" method="post">
+    <div class="form-group">
+        <label for="Nickname">Нікнейм (необов'язково):</label>
+        <input type="text" id="Nickname" name="nickname" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="AccessCode">Код доступу:</label>
+        <input type="text" id="AccessCode" name="accessCode" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Увійти</button>
+</form>
