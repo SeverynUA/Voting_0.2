@@ -90,6 +90,26 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/coolm/source/repos/Voting_0.2/Voting_0.2/Views/Voting/AddCandidate.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm90aW5nXEFkZENhbmRpZGF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/coolm/source/repos/Voting_0.2/Voting_0.2/Views/Voting/CreateVoting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm90aW5nXENyZWF0ZVZvdGluZy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/coolm/source/repos/Voting_0.2/Voting_0.2/Views/Voting/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm90aW5nXERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/coolm/source/repos/Voting_0.2/Voting_0.2/Views/Voting/GetVotingResults.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm90aW5nXEdldFZvdGluZ1Jlc3VsdHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/coolm/source/repos/Voting_0.2/Voting_0.2/Views/Voting/StartVoting.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVm90aW5nXFN0YXJ0Vm90aW5nLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/coolm/source/repos/Voting_0.2/Voting_0.2/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 

@@ -58,7 +58,7 @@ namespace Voting_0._2.Controllers
             return RedirectToAction("GetVotings");
         }
 
-        // Сторінка для додавання кандидата (тільки для Адміністратора)
+        // Сторінка для додавання кандидата (тільки для Organizator)
         [HttpGet("{votingId}/add-candidate")]
         [Authorize(Roles = "Organizator")]
         public IActionResult AddCandidate(int votingId)
