@@ -31,14 +31,12 @@ namespace Voting_0._2.Controllers.Authorization
             return View(user);
         }
 
-        [Authorize(Roles = Roles.Admin)]
         [HttpGet("register-admin")]
         public IActionResult RegisterAdmin()
         {
             return View();
         }
 
-        [Authorize(Roles = Roles.Admin)]
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin(AdminRegisterModel model)
         {
@@ -59,14 +57,12 @@ namespace Voting_0._2.Controllers.Authorization
             return View(model);
         }
 
-        [Authorize(Roles = Roles.Admin)]
         [HttpGet("login-admin")]
         public IActionResult LoginAdmin()
         {
             return View();
         }
 
-        [Authorize(Roles = Roles.Admin)]
         [HttpPost("login-admin")]
         public async Task<IActionResult> LoginAdmin(LoginModel model)
         {
@@ -181,7 +177,6 @@ namespace Voting_0._2.Controllers.Authorization
             return View(model);
         }
 
-        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

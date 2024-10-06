@@ -81,7 +81,6 @@ using (var scope = app.Services.CreateScope())
 
     // Створюємо ролі
     await CreateRoles(services);
-}
 
 using (IServiceScope scope = app.Services.CreateScope())
 {
@@ -101,7 +100,6 @@ using (IServiceScope scope = app.Services.CreateScope())
     await SeedData.InitializeAsync(serviceProvider, app.Environment);
 }
 
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -109,11 +107,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseSession();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
