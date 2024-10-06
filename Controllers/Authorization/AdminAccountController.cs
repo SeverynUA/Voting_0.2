@@ -19,6 +19,13 @@ namespace Voting_0._2.Controllers.Authorization
             _signInManager = signInManager;
         }
 
+        [AllowAnonymous]
+        public IActionResult AccessDenied(string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {

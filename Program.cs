@@ -5,7 +5,6 @@ using Voting_0._2.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -28,7 +27,6 @@ builder.Services.ConfigureApplicationCookie(options =>
     // Видалення кукі після закриття браузера, якщо "Запам'ятати мене" не вибрано
     options.Cookie.Expiration = null;  // Кукі будуть сесійними і видаляться після закриття браузера
 });
-
 
 builder.Services.AddAuthorization();
 
@@ -57,6 +55,7 @@ builder.Services.AddIdentity<Account, IdentityRole>()
 
 var app = builder.Build();
 
+// Метод для створення ролей
 async Task CreateRoles(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -79,25 +78,18 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
 
-    // Створюємо ролі
+    // Створюємо ролі та виконуємо міграцію
     await CreateRoles(services);
 
-using (IServiceScope scope = app.Services.CreateScope())
-{
-    IServiceProvider serviceProvider = scope.ServiceProvider;
+    // Виконуємо міграцію та ініціалізацію бази даних
+    var votingDbContext = services.GetRequiredService<VotingDbContext>();
+    await votingDbContext.Database.MigrateAsync();
 
-    var VotingDbContext = serviceProvider.GetRequiredService<VotingDbContext>();
-    VotingDbContext.Database.EnsureCreated();
-
-    await VotingDbContext.Database.MigrateAsync();
-
-    var userContext = serviceProvider.GetRequiredService<UserDbContext>();
-    userContext.Database.EnsureCreated();
-
+    var userContext = services.GetRequiredService<UserDbContext>();
     await userContext.Database.MigrateAsync();
 
-    // Ініціалізація початкових даних для бібліотеки
-    await SeedData.InitializeAsync(serviceProvider, app.Environment);
+    // Ініціалізація початкових даних для бази даних
+    await SeedData.InitializeAsync(services, app.Environment);
 }
 
 // Configure the HTTP request pipeline.
@@ -113,8 +105,14 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+// Додаємо автентифікацію та авторизацію
+app.UseAuthentication();
 app.UseAuthorization();
 
+// Використання сесії
+app.UseSession();
+
+// Маршрутизація
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

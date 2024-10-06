@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Voting_0.2")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7f921a7c88e924dadf2b90ab8e2808a58b774689")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+26ed57688d64e37d3f74ececbd2f2400ec7a988b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Voting_0.2")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Voting_0.2")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

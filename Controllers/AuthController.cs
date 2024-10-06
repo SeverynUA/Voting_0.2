@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Voting_0._2.Data.Entities;
 using Voting_0._2.Models.DTOs.Account;
@@ -13,6 +14,13 @@ namespace Voting_0._2.Controllers
         public AuthController(VotingDbContext context)
         {
             _context = context;
+        }
+
+        [AllowAnonymous]
+        public IActionResult AccessDenied(string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
         }
 
         [HttpPost("enter-admin-access-code")]

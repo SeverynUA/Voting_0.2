@@ -19,6 +19,13 @@ namespace Voting_0._2.Controllers.Authorization
             _signInManager = signInManager;
         }
 
+        [AllowAnonymous]
+        public IActionResult AccessDenied(string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
+        }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -47,7 +54,7 @@ namespace Voting_0._2.Controllers.Authorization
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(organizator, Roles.Organizator);
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "OrganizatorAccount");
                 }
                 foreach (var error in result.Errors)
                 {
@@ -73,7 +80,7 @@ namespace Voting_0._2.Controllers.Authorization
                 if (result.Succeeded)
                 {
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "OrganizatorAccount");
                 }
                 ModelState.AddModelError(string.Empty, "Невірний логін або пароль");
             }
@@ -115,7 +122,7 @@ namespace Voting_0._2.Controllers.Authorization
                 }
             }
 
-            return RedirectToAction("LoginOrganizator");
+            return RedirectToAction("LoginOrganizator" , "OrganizatorAccount");
         }
 
         [Authorize(Roles = Roles.Organizator)]
@@ -135,7 +142,7 @@ namespace Voting_0._2.Controllers.Authorization
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("LoginOrganizator", "OrganizatorAccount");
             }
 
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
