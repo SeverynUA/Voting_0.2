@@ -141,3 +141,4 @@ C:\Users\coolm\source\repos\Voting_0.2\Voting_0.2\obj\Debug\net8.0\refint\Voting
 C:\Users\coolm\source\repos\Voting_0.2\Voting_0.2\obj\Debug\net8.0\Voting_0.2.pdb
 C:\Users\coolm\source\repos\Voting_0.2\Voting_0.2\obj\Debug\net8.0\Voting_0.2.genruntimeconfig.cache
 C:\Users\coolm\source\repos\Voting_0.2\Voting_0.2\obj\Debug\net8.0\ref\Voting_0.2.dll
+C:\Users\coolm\source\repos\Voting_0.2\Voting_0.2\obj\Debug\net8.0\Voting_0.2.sourcelink.json

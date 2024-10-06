@@ -1,0 +1,26 @@
+﻿@using Voting_0._2.Models.Voting_m
+@model Voting
+
+<form asp-action="EditVoting" method="post">
+    <div class="form-group">
+        <label for="Name">Назва голосування</label>
+        <input type="text" class="form-control" id="Name" name="Name" value="@Model.Name" required />
+    </div>
+
+    <div class="form-group">
+        <label for="VotingDuration">Тривалість голосування</label>
+        <input type="text" class="form-control" id="VotingDuration" name="VotingDuration" value="@Model.VotingDuration" required />
+    </div>
+
+    <div class="form-group">
+        <label for="AccessKey">Ключ доступу</label>
+        <input type="text" class="form-control" id="AccessKey" name="AccessKey" value="@Model.AccessKey" required />
+    </div>
+
+    <div class="form-group">
+        <label for="NumberOfVoters">Кількість виборців</label>
+        <input type="number" class="form-control" id="NumberOfVoters" name="NumberOfVoters" value="@Model.NumberOfVoters" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Зберегти</button>
+</form>

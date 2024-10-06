@@ -24,11 +24,11 @@ namespace Voting_0._2.Controllers
                 {
                     return RedirectToAction("Index", "AdminAccount");
                 }
-                else if (User.IsInRole(Roles.Organizator))
+                if (User.IsInRole(Roles.Organizator))
                 {
                     return RedirectToAction("Index", "OrganizatorAccount");
                 }
-                else if (User.IsInRole(Roles.Voter))
+                if (User.IsInRole(Roles.Voter))
                 {
                     return View();
                 }

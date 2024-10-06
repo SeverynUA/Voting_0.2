@@ -4,6 +4,7 @@ using Voting_0._2.Data.Entities.Users;
 using Voting_0._2.Models.DTOs.Account.Admin;
 using Voting_0._2.Models.DTOs.Account;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Voting_0._2.Controllers.Authorization
 {
@@ -17,6 +18,7 @@ namespace Voting_0._2.Controllers.Authorization
             _userManager = userManager;
             _signInManager = signInManager;
         }
+
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -29,12 +31,14 @@ namespace Voting_0._2.Controllers.Authorization
             return View(user);
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet("register-admin")]
         public IActionResult RegisterAdmin()
         {
             return View();
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("register-admin")]
         public async Task<IActionResult> RegisterAdmin(AdminRegisterModel model)
         {
@@ -55,12 +59,14 @@ namespace Voting_0._2.Controllers.Authorization
             return View(model);
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet("login-admin")]
         public IActionResult LoginAdmin()
         {
             return View();
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("login-admin")]
         public async Task<IActionResult> LoginAdmin(LoginModel model)
         {
@@ -79,7 +85,7 @@ namespace Voting_0._2.Controllers.Authorization
             return View(model);
         }
 
-
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet("edit-account-admin")]
         public async Task<IActionResult> EditAccountAdmin()
         {
@@ -100,6 +106,7 @@ namespace Voting_0._2.Controllers.Authorization
             return View(model);
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("edit-account-admin")]
         public async Task<IActionResult> EditAccountAdmin(EditAccountModel model)
         {
@@ -139,12 +146,14 @@ namespace Voting_0._2.Controllers.Authorization
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpGet("change-password-admin")]
         public IActionResult ChangePassword()
         {
             return View(new ChangePasswordModel());
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost("change-password-admin")]
         public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
@@ -172,6 +181,7 @@ namespace Voting_0._2.Controllers.Authorization
             return View(model);
         }
 
+        [Authorize(Roles = Roles.Admin)]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

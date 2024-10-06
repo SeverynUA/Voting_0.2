@@ -1,0 +1,39 @@
+﻿@using Voting_0._2.Models.Voting_m
+@model IEnumerable<Voting>
+
+<h2>Список Ваших голосувань</h2>
+
+@if (!Model.Any())
+{
+    <p>У вас немає створених голосувань.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Назва голосування</th>
+                <th>Тривалість</th>
+                <th>Кількість виборців</th>
+                <th>Ключ доступу</th>
+                <th>Дії</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var voting in Model)
+            {
+                <tr>
+                    <td>@voting.Name</td>
+                    <td>@voting.VotingDuration</td>
+                    <td>@voting.NumberOfVoters ?? "Не визначено"</td>
+                    <td>@voting.AccessKey</td>
+                    <td>
+                        <a href="@Url.Action("EditVoting", new { votingId = voting.Id })" class="btn btn-warning">Редагувати</a>
+                        <a href="@Url.Action("DeleteVoting", new { votingId = voting.Id })" class="btn btn-danger">Видалити</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<a href="@Url.Action("CreateVoting")" class="btn btn-primary">Створити нове голосування</a>

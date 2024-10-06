@@ -5,6 +5,7 @@ using Voting_0._2.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -56,24 +57,6 @@ builder.Services.AddIdentity<Account, IdentityRole>()
 
 var app = builder.Build();
 
-using (IServiceScope scope = app.Services.CreateScope())
-{
-    IServiceProvider serviceProvider = scope.ServiceProvider;
-
-    var VotingDbContext = serviceProvider.GetRequiredService<VotingDbContext>();
-    VotingDbContext.Database.EnsureCreated();
-
-    await VotingDbContext.Database.MigrateAsync();
-
-    var userContext = serviceProvider.GetRequiredService<UserDbContext>();
-    userContext.Database.EnsureCreated();
-
-    await userContext.Database.MigrateAsync();
-
-    // Ініціалізація початкових даних для бібліотеки
-    await SeedData.InitializeAsync(serviceProvider, app.Environment);
-}
-
 async Task CreateRoles(IServiceProvider serviceProvider)
 {
     var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -100,6 +83,25 @@ using (var scope = app.Services.CreateScope())
     await CreateRoles(services);
 }
 
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    IServiceProvider serviceProvider = scope.ServiceProvider;
+
+    var VotingDbContext = serviceProvider.GetRequiredService<VotingDbContext>();
+    VotingDbContext.Database.EnsureCreated();
+
+    await VotingDbContext.Database.MigrateAsync();
+
+    var userContext = serviceProvider.GetRequiredService<UserDbContext>();
+    userContext.Database.EnsureCreated();
+
+    await userContext.Database.MigrateAsync();
+
+    // Ініціалізація початкових даних для бібліотеки
+    await SeedData.InitializeAsync(serviceProvider, app.Environment);
+}
+
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -107,6 +109,11 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseSession();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

@@ -4,6 +4,7 @@ using Voting_0._2.Data.Entities.Users;
 using Voting_0._2.Models.DTOs.Account.Organizator;
 using Voting_0._2.Models.DTOs.Account;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Voting_0._2.Controllers.Authorization
 {
@@ -62,7 +63,6 @@ namespace Voting_0._2.Controllers.Authorization
             return View();
         }
 
-
         [HttpPost("login-organizator")]
         public async Task<IActionResult> LoginOrganizator(LoginModel model)
         {
@@ -80,12 +80,14 @@ namespace Voting_0._2.Controllers.Authorization
             return View(model);
         }
 
+        [Authorize(Roles = Roles.Organizator)]
         [HttpGet("edit-account-organizator")]
         public IActionResult EditAccountOrganizator()
         {
             return View();
         }
 
+        [Authorize(Roles = Roles.Organizator)]
         [HttpPost("edit-account-organizator")]
         public async Task<IActionResult> EditAccountOrganizator(EditAccountModel model)
         {
@@ -116,12 +118,14 @@ namespace Voting_0._2.Controllers.Authorization
             return RedirectToAction("LoginOrganizator");
         }
 
+        [Authorize(Roles = Roles.Organizator)]
         [HttpGet("change-password-organizator")]
         public IActionResult ChangePassword()
         {
             return View(new ChangePasswordModel());
         }
 
+        [Authorize(Roles = Roles.Organizator)]
         [HttpPost("change-password-organizator")]
         public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
@@ -148,7 +152,6 @@ namespace Voting_0._2.Controllers.Authorization
 
             return View(model);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]

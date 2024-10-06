@@ -24,6 +24,78 @@ namespace Voting_0._2.Controllers
             _userManager = userManager;
         }
 
+        // Список голосувань для перегляду з можливістю редагування та видалення
+        [HttpGet("list")]
+        [Authorize(Roles = "Organizator")]
+        public async Task<IActionResult> GetVotings()
+        {
+            var currentUserId = _userManager.GetUserId(User); // Отримуємо Id поточного користувача
+            var votings = await _dbContext.Votings
+                .Where(v => v.OrganizatorId == currentUserId) // Фільтруємо голосування за організатором
+                .ToListAsync();
+
+            return View(votings);
+        }
+
+
+        [HttpGet("{votingId}/edit")]
+        [Authorize(Roles = "Organizator")]
+        public async Task<IActionResult> EditVoting(int votingId)
+        {
+            var voting = await _dbContext.Votings.FindAsync(votingId);
+            if (voting == null) return NotFound();
+
+            return View(voting);
+        }
+
+
+        [HttpPost("{votingId}/edit")]
+        [Authorize(Roles = "Organizator")]
+        public async Task<IActionResult> EditVoting(int votingId, Voting model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var voting = await _dbContext.Votings.FindAsync(votingId);
+            if (voting == null) return NotFound();
+
+            voting.Name = model.Name;
+            voting.VotingDuration = model.VotingDuration;
+            voting.AccessKey = model.AccessKey;
+            voting.NumberOfVoters = model.NumberOfVoters;
+
+            await _dbContext.SaveChangesAsync();
+
+            return RedirectToAction("GetVotings");
+        }
+
+
+        [HttpGet("{votingId}/delete")]
+        [Authorize(Roles = "Organizator")]
+        public async Task<IActionResult> DeleteVoting(int votingId)
+        {
+            var voting = await _dbContext.Votings.FindAsync(votingId);
+            if (voting == null) return NotFound();
+
+            return View(voting); // Сторінка з підтвердженням видалення
+        }
+
+        [HttpPost("{votingId}/delete")]
+        [Authorize(Roles = "Organizator")]
+        public async Task<IActionResult> ConfirmDeleteVoting(int votingId)
+        {
+            var voting = await _dbContext.Votings.FindAsync(votingId);
+            if (voting == null) return NotFound();
+
+            _dbContext.Votings.Remove(voting);
+            await _dbContext.SaveChangesAsync();
+
+            return RedirectToAction("GetVotings");
+        }
+
+
         [HttpGet("create")]
         [Authorize(Roles = "Organizator")]
         public IActionResult CreateVoting()
@@ -196,14 +268,6 @@ namespace Voting_0._2.Controllers
             await _dbContext.SaveChangesAsync();
 
             return RedirectToAction("Details", new { votingId });
-        }
-
-        // Список голосувань для перегляду
-        [HttpGet("list")]
-        public async Task<IActionResult> GetVotings()
-        {
-            var votings = await _dbContext.Votings.ToListAsync();
-            return View(votings);
         }
     }
 }
