@@ -25,7 +25,7 @@ namespace Voting_0._2.Service
                 }
             };
 
-            _context.Candidats.Add(candidat);
+            _context.Candidates.Add(candidat);
             await _context.SaveChangesAsync();
         }
     }

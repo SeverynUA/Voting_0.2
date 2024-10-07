@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\js\\admin-access.js"
     },
     {
+      "Id": "C:\\Users\\coolm\\source\\repos\\Voting_0.2\\Voting_0.2\\wwwroot\\js\\candidate-form-container.js",
+      "PackagePath": "staticwebassets\\js\\candidate-form-container.js"
+    },
+    {
       "Id": "C:\\Users\\coolm\\source\\repos\\Voting_0.2\\Voting_0.2\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },

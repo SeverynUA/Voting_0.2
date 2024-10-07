@@ -17,7 +17,7 @@ namespace Voting_0._2.Data.Entities
 
         public DbSet<Voting> Votings { get; set; }
         public DbSet<Vote> Votes { get; set; }
-        public DbSet<Candidat> Candidats { get; set; }
+        public DbSet<Candidat> Candidates { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<Voter_User> Voters { get; set; }
 

@@ -26,7 +26,7 @@ namespace Voting_0._2.Controllers
 
         // Список голосувань для перегляду з можливістю редагування та видалення
         [HttpGet("list")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> GetVotings()
         {
             var currentUserId = _userManager.GetUserId(User); // Отримуємо Id поточного користувача
@@ -39,7 +39,7 @@ namespace Voting_0._2.Controllers
 
 
         [HttpGet("{votingId}/edit")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> EditVoting(int votingId)
         {
             var voting = await _dbContext.Votings.FindAsync(votingId);
@@ -50,7 +50,7 @@ namespace Voting_0._2.Controllers
 
 
         [HttpPost("{votingId}/edit")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> EditVoting(int votingId, Voting model)
         {
             if (!ModelState.IsValid)
@@ -73,7 +73,7 @@ namespace Voting_0._2.Controllers
 
 
         [HttpGet("{votingId}/delete")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> DeleteVoting(int votingId)
         {
             var voting = await _dbContext.Votings.FindAsync(votingId);
@@ -83,7 +83,7 @@ namespace Voting_0._2.Controllers
         }
 
         [HttpPost("{votingId}/delete")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> ConfirmDeleteVoting(int votingId)
         {
             var voting = await _dbContext.Votings.FindAsync(votingId);
@@ -97,14 +97,14 @@ namespace Voting_0._2.Controllers
 
 
         [HttpGet("create")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public IActionResult CreateVoting()
         {
             return View();
         }
 
         [HttpPost("create")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> CreateVoting(VotingCreateModel model)
         {
             if (!ModelState.IsValid)
@@ -130,28 +130,63 @@ namespace Voting_0._2.Controllers
             return RedirectToAction("GetVotings");
         }
 
-        // Сторінка для додавання кандидата (тільки для Organizator)
-        [HttpGet("{votingId}/add-candidate")]
-        [Authorize(Roles = "Organizator")]
-        public IActionResult AddCandidate(int votingId)
-        {
-            ViewBag.VotingId = votingId;
-            return View();
-        }
-
-        [HttpPost("{votingId}/add-candidate")]
-        [Authorize(Roles = "Organizator")]
-        public async Task<IActionResult> AddCandidateToVoting(int votingId, CandidateCreateModel model)
+        [HttpPost]
+        [Authorize(Roles = Roles.Organizator)]
+        public async Task<IActionResult> AddCandidates(List<CandidateCreateModel> candidates, int votingId)
         {
             var voting = await _dbContext.Votings.Include(v => v.Candidates).FirstOrDefaultAsync(v => v.Id == votingId);
             if (voting == null) return NotFound();
 
+            foreach (var candidateModel in candidates)
+            {
+                var candidate = new Candidat
+                {
+                    Name = candidateModel.Name,
+                    Description = candidateModel.Description,
+                    Voting = voting
+                };
+
+                if (candidateModel.ImageFile != null && candidateModel.ImageFile.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await candidateModel.ImageFile.CopyToAsync(memoryStream);
+                        var image = new Image
+                        {
+                            ImageData = memoryStream.ToArray(),
+                            Candidat = candidate
+                        };
+                        _dbContext.Images.Add(image);
+                    }
+                }
+
+                _dbContext.Candidates.Add(candidate);
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = votingId });
+        }
+
+        [HttpPost("{votingId}/add-candidate")]
+        [Authorize(Roles = Roles.Organizator)]
+        public async Task<IActionResult> AddCandidateToVoting(int votingId, CandidateCreateModel model)
+        {
+            // Знаходимо голосування
+            var voting = await _dbContext.Votings.Include(v => v.Candidates).FirstOrDefaultAsync(v => v.Id == votingId);
+            if (voting == null)
+            {
+                return NotFound("Голосування не знайдено.");
+            }
+
+            // Валідація моделі
             if (!ModelState.IsValid)
             {
                 ViewBag.VotingId = votingId;
                 return View(model);
             }
 
+            // Перевіряємо, чи вже є кандидат з таким ім'ям
             if (voting.Candidates.Any(c => c.Name == model.Name))
             {
                 ModelState.AddModelError("", "Кандидат з таким іменем вже існує.");
@@ -159,16 +194,72 @@ namespace Voting_0._2.Controllers
                 return View(model);
             }
 
-            var candidate = new Candidat { Name = model.Name };
-            voting.Candidates.Add(candidate);
-            await _dbContext.SaveChangesAsync();
+            // Створюємо нового кандидата
+            var candidate = new Candidat
+            {
+                Name = model.Name,
+                Voting = voting // Встановлюємо зв'язок через навігаційну властивість
+            };
 
-            return RedirectToAction("Details", new { votingId });
+            // Додаємо кандидата до колекції кандидатів голосування
+            voting.Candidates.Add(candidate);
+            await _dbContext.SaveChangesAsync(); // Зберігаємо зміни
+
+            return RedirectToAction("Details", new { id = votingId });
         }
+
+
+        [HttpPost]
+        [Authorize(Roles = Roles.Organizator)]
+        public async Task<IActionResult> AddCandidateWithImage(CandidateCreateModel model, IFormFile imageFile, int votingId)
+        {
+            // Валідація моделі
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Знаходимо голосування
+            var voting = await _dbContext.Votings.Include(v => v.Candidates).FirstOrDefaultAsync(v => v.Id == votingId);
+            if (voting == null)
+            {
+                return NotFound("Голосування не знайдено.");
+            }
+
+            // Створюємо нового кандидата
+            var candidate = new Candidat
+            {
+                Name = model.Name,
+                Description = model.Description,
+                Voting = voting // Встановлюємо зв'язок через навігаційну властивість
+            };
+
+            // Обробка зображення, якщо воно додане
+            if (imageFile != null && imageFile.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await imageFile.CopyToAsync(memoryStream);
+                    var image = new Image
+                    {
+                        ImageData = memoryStream.ToArray(),
+                        Candidat = candidate // Встановлюємо зв'язок із кандидатом
+                    };
+                    _dbContext.Images.Add(image);
+                }
+            }
+
+            // Додаємо кандидата до колекції
+            voting.Candidates.Add(candidate);
+            await _dbContext.SaveChangesAsync(); // Зберігаємо зміни
+
+            return RedirectToAction("Details", new { id = votingId });
+        }
+
+
 
         // Сторінка для перегляду деталей голосування
         [HttpGet("{votingId}")]
-        [Authorize(Roles = "Admin, Voter")]
         public async Task<IActionResult> Details(int votingId)
         {
             var voting = await _dbContext.Votings.Include(v => v.Candidates).FirstOrDefaultAsync(v => v.Id == votingId);
@@ -179,7 +270,7 @@ namespace Voting_0._2.Controllers
 
         // Сторінка для запуску голосування (тільки для Organizator)
         [HttpGet("{votingId}/start")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> StartVoting(int votingId)
         {
             var voting = await _dbContext.Votings.FindAsync(votingId);
@@ -189,7 +280,7 @@ namespace Voting_0._2.Controllers
         }
 
         [HttpPost("{votingId}/start")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> StartVotingConfirmed(int votingId)
         {
             var voting = await _dbContext.Votings.FindAsync(votingId);
@@ -208,7 +299,7 @@ namespace Voting_0._2.Controllers
 
         // Сторінка для перегляду результатів голосування (тільки для Organizator)
         [HttpGet("{votingId}/results")]
-        [Authorize(Roles = "Organizator")]
+        [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> GetVotingResults(int votingId)
         {
             var voting = await _dbContext.Votings
@@ -221,7 +312,6 @@ namespace Voting_0._2.Controllers
         }
 
         [HttpPost("{votingId}/cast-vote")]
-        [Authorize(Roles = "Voter")]
         public async Task<IActionResult> CastVote(int votingId, VoteModel model)
         {
             var voting = await _dbContext.Votings.Include(v => v.Candidates).Include(v => v.Voters).FirstOrDefaultAsync(v => v.Id == votingId);

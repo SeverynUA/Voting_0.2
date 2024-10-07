@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Voting_0._2.Models.DTOs.Account.Admin
+namespace Voting_0._2.Models.DTOs.Account
 {
-    public class AdminRegisterModel
+    public class AccountRegisterModel
     {
         [Required]
         [Display(Name = "Full Name")]

@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Voting_0._2.Data.Entities.Users;
-using Voting_0._2.Models.DTOs.Account.Admin;
 using Voting_0._2.Models.DTOs.Account;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Voting_0._2.Controllers.Authorization
 {
+    [Route("AdminAccount")]
     public class AdminAccountController : Controller
     {
         private readonly UserManager<Account> _userManager;
@@ -26,7 +26,9 @@ namespace Voting_0._2.Controllers.Authorization
             return View();
         }
 
+        [Authorize]
         [HttpGet]
+        [Route("Index")]
         public async Task<IActionResult> Index()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -45,7 +47,7 @@ namespace Voting_0._2.Controllers.Authorization
         }
 
         [HttpPost("register-admin")]
-        public async Task<IActionResult> RegisterAdmin(AdminRegisterModel model)
+        public async Task<IActionResult> RegisterAdmin(AccountRegisterModel model)
         {
             if (ModelState.IsValid)
             {

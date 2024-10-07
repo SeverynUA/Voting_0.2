@@ -18,34 +18,39 @@ namespace Voting_0._2.Controllers
 
         public IActionResult Index()
         {
+            ////Поки не рішиться проблема із переходом до головної сторінки
+
+            ///////////////////////
+            //HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+            ///////////////////////
+
             if (User.Identity.IsAuthenticated)
             {
+                _logger.LogInformation("User is authenticated.");
                 if (User.IsInRole(Roles.Admin))
                 {
+                    _logger.LogInformation("User is in Admin role.");
                     return RedirectToAction("Index", "AdminAccount");
                 }
                 if (User.IsInRole(Roles.Organizator))
                 {
+                    _logger.LogInformation("User is in Organizator role.");
                     return RedirectToAction("Index", "OrganizatorAccount");
-                }
-                if (User.IsInRole(Roles.Voter))
-                {
-                    return View();
                 }
                 else
                 {
+                    _logger.LogInformation("User has no valid role.");
                     HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-
-                    // Якщо користувач не має відповідної ролі
                     return RedirectToAction("LoginVoter", "Auth");
                 }
             }
             else
             {
-                // Користувач не зареєстрований, перенаправляємо на сторінку логіну
+                _logger.LogInformation("User is not authenticated.");
                 return RedirectToAction("LoginVoter", "Auth");
             }
         }
+
 
         public IActionResult Privacy()
         {

@@ -18,6 +18,10 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\coolm\source\repos\Voting_0.2\Voting_0.2
 build_property._RazorSourceGeneratorDebug = 
 
+[C:/Users/coolm/source/repos/Voting_0.2/Voting_0.2/Views/Account/AccessDenied.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWNjb3VudFxBY2Nlc3NEZW5pZWQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/coolm/source/repos/Voting_0.2/Voting_0.2/Views/AdminAccount/AccessDenied.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5BY2NvdW50XEFjY2Vzc0RlbmllZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\DTOs\Account\Voter\" />
+    <Folder Include="Models\DTOs\Voter\" />
   </ItemGroup>
 
   <ItemGroup>

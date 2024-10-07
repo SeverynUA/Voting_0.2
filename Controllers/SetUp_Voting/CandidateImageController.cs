@@ -28,7 +28,7 @@ namespace Voting_0._2.Controllers.SetUp_Voting
         [Authorize(Roles = "Organizator")]
         public async Task<IActionResult> AddCandidateImage(int candidateId, IFormFile imageFile)
         {
-            var candidate = await _dbContext.Candidats.Include(c => c.Image).FirstOrDefaultAsync(c => c.Id == candidateId);
+            var candidate = await _dbContext.Candidates.Include(c => c.Image).FirstOrDefaultAsync(c => c.Id == candidateId);
             if (candidate == null)
             {
                 return NotFound();

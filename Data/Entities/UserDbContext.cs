@@ -8,22 +8,21 @@ using Voting_0._2.Models.Voting_m.SetUp;
 
 namespace Voting_0._2.Data.Entities
 {
-    public class UserDbContext : IdentityDbContext<IdentityUser>
+    public class UserDbContext : IdentityDbContext<Account>
     {
         public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
         {
         }
 
-        public DbSet<Account> AdminUsers { get; set; }
-        public DbSet<Account> Organizators { get; set; }
+        // У вас є один DbSet для всіх користувачів
+        public DbSet<Account> Accounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            //modelBuilder.Entity<Voting>()
-            //.OwnsOne(v => v.VotingSystem);
-
+            // Інші налаштування, якщо необхідно
         }
     }
+
 }
