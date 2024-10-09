@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Voting_0._2.Data.Entities;
 using Voting_0._2.Models.DTOs.Account;
 
-namespace Voting_0._2.Controllers
+namespace Voting_0._2.Controllers.Authorization
 {
     public class AuthController : Controller
     {
@@ -32,7 +32,7 @@ namespace Voting_0._2.Controllers
             if (accessCode == AdminAccessCode)
             {
                 // Якщо код правильний, перенаправляємо користувача
-                return Json(new { isValid = true, redirectUrl = Url.Action("LoginAdmin", "AdminAccount") });
+                return Json(new { isValid = true, redirectUrl = Url.Action("LoginAdmin", "Account") });
             }
 
             // Якщо код неправильний, повертаємо JSON з помилкою

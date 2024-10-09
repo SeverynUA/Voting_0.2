@@ -18,24 +18,18 @@ namespace Voting_0._2.Controllers
 
         public IActionResult Index()
         {
-            ////Поки не рішиться проблема із переходом до головної сторінки
-
-            ///////////////////////
-            //HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-            ///////////////////////
-
             if (User.Identity.IsAuthenticated)
             {
                 _logger.LogInformation("User is authenticated.");
                 if (User.IsInRole(Roles.Admin))
                 {
                     _logger.LogInformation("User is in Admin role.");
-                    return RedirectToAction("Index", "AdminAccount");
+                    return RedirectToAction("AdminIndex", "Account");
                 }
                 if (User.IsInRole(Roles.Organizator))
                 {
                     _logger.LogInformation("User is in Organizator role.");
-                    return RedirectToAction("Index", "OrganizatorAccount");
+                    return RedirectToAction("OrganizatorIndex", "Account");
                 }
                 else
                 {

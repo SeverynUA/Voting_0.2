@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "uDwcw17pDgFpv3k0jQ4v3zEqoB0BGuAQkkUHpSz7+Rw=",
+  "Hash": "rICYTCHpMr1UazFn869aVx4eiiQEPAxCs8dgStQmvAs=",
   "Source": "Voting_0.2",
   "BasePath": "_content/Voting_0.2",
   "Mode": "Default",
@@ -129,6 +129,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\candidate-form-container.js"
+    },
+    {
+      "Identity": "C:\\Users\\coolm\\source\\repos\\Voting_0.2\\Voting_0.2\\wwwroot\\js\\Edit_candidate-form-container.js",
+      "SourceId": "Voting_0.2",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\coolm\\source\\repos\\Voting_0.2\\Voting_0.2\\wwwroot\\",
+      "BasePath": "_content/Voting_0.2",
+      "RelativePath": "js/Edit_candidate-form-container.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\Edit_candidate-form-container.js"
     },
     {
       "Identity": "C:\\Users\\coolm\\source\\repos\\Voting_0.2\\Voting_0.2\\wwwroot\\js\\site.js",

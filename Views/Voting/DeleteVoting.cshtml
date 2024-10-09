@@ -1,0 +1,10 @@
+﻿@model Voting_0._2.Models.Voting
+
+<h2>Підтвердження видалення</h2>
+<p>Ви дійсно хочете видалити голосування: <strong>@Model.Name</strong>?</p>
+
+<form asp-action="ConfirmDeleteVoting" asp-route-votingId="@Model.Id" method="post">
+    <input type="hidden" name="__RequestVerificationToken" value="@Antiforgery.GetAndStoreTokens(HttpContext).RequestToken" />
+    <button type="submit" class="btn btn-danger">Підтвердити видалення</button>
+    <a href="@Url.Action("GetVotings", "Voting")" class="btn btn-secondary">Скасувати</a>
+</form>

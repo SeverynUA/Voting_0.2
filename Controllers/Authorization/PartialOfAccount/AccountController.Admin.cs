@@ -1,38 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Voting_0._2.Data.Entities.Users;
 using Voting_0._2.Models.DTOs.Account;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Voting_0._2.Controllers.Authorization
 {
-    [Route("AdminAccount")]
-    public class AdminAccountController : Controller
+    // AccountController.Admin.cs
+    public partial class AccountController : Controller
     {
-        private readonly UserManager<Account> _userManager;
-        private readonly SignInManager<Account> _signInManager;
-
-        public AdminAccountController(UserManager<Account> userManager, SignInManager<Account> signInManager)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
-
-        [AllowAnonymous]
-        public IActionResult AccessDenied(string returnUrl)
-        {
-            ViewBag.ReturnUrl = returnUrl;
-            return View();
-        }
-
-        [Authorize]
-        [HttpGet]
-        [Route("Index")]
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = Roles.Admin)]
+        [HttpGet("Admin/Index")]
+        public async Task<IActionResult> AdminIndex()
         {
             var user = await _userManager.GetUserAsync(User);
-
             if (user == null)
             {
                 return NotFound("Користувача не знайдено.");
@@ -55,7 +37,7 @@ namespace Voting_0._2.Controllers.Authorization
                 var result = await _userManager.CreateAsync(admin, model.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(admin,Roles.Admin);
+                    await _userManager.AddToRoleAsync(admin, Roles.Admin);
                     return RedirectToAction("Index");
                 }
                 foreach (var error in result.Errors)
@@ -153,14 +135,14 @@ namespace Voting_0._2.Controllers.Authorization
 
         [Authorize(Roles = Roles.Admin)]
         [HttpGet("change-password-admin")]
-        public IActionResult ChangePassword()
+        public IActionResult ChangePasswordAdmin()
         {
             return View(new ChangePasswordModel());
         }
 
         [Authorize(Roles = Roles.Admin)]
         [HttpPost("change-password-admin")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+        public async Task<IActionResult> ChangePasswordAdmin(ChangePasswordModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -186,12 +168,5 @@ namespace Voting_0._2.Controllers.Authorization
             return View(model);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
-        }
     }
 }

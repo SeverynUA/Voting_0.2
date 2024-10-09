@@ -1,9 +1,12 @@
 ﻿@using Voting_0._2.Models.ViewModels.CreateModels
 @model VotingCreateModel
 
+<script src="~/js/candidate-form-container.js"></script>
+
 <h2>Створити нове голосування</h2>
 
-<form asp-action="CreateVoting" method="post">
+<form asp-action="CreateVoting" method="post" enctype="multipart/form-data">
+    <!-- Поля для голосування -->
     <div class="form-group">
         <label asp-for="Name" class="control-label">Назва голосування</label>
         <input asp-for="Name" class="form-control" />
@@ -37,8 +40,33 @@
         <span asp-validation-for="NumberOfVoters" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Створити голосування</button>
+    <!-- Секція для додавання кандидатів -->
+    <h3>Кандидати</h3>
+    <div id="candidate-form-container">
+        <div class="candidate-form-group" id="candidate-1">
+            <h4>Кандидат 1</h4>
+            <div class="form-group">
+                <label>Ім'я кандидата</label>
+                <input name="Candidates[0].Name" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Опис кандидата</label>
+                <input name="Candidates[0].Description" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Зображення кандидата</label>
+                <input type="file" name="Candidates[0].ImageFile" class="form-control" />
+            </div>
+
+            <button type="button" class="btn btn-danger remove-candidate-btn" onclick="removeCandidate(1)">Видалити кандидата</button>
+        </div>
+    </div>
+
+    <button type="button" id="add-candidate-btn" class="btn btn-primary mt-2">Додати кандидата</button>
+
+    <button type="submit" class="btn btn-success mt-3">Створити голосування</button>
 </form>
 
 <a href="@Url.Action("GetVotings")" class="btn btn-secondary mt-2">Повернутись до голосувань</a>
-

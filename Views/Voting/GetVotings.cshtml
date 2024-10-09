@@ -30,6 +30,8 @@ else
                     <td>
                         <a href="@Url.Action("EditVoting", new { votingId = voting.Id })" class="btn btn-warning">Редагувати</a>
                         <a href="@Url.Action("DeleteVoting", new { votingId = voting.Id })" class="btn btn-danger">Видалити</a>
+                        <a href="@Url.Action("StartVoting", new { votingId = voting.Id })" class="btn btn-success">Почати</a>
+                        <a href="@Url.Action("Details", new { votingId = voting.Id })" class="btn btn-info">Переглянути</a>
                     </td>
                 </tr>
             }

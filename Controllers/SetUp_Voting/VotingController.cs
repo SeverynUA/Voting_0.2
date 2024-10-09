@@ -10,15 +10,17 @@ using Voting_0._2.Models.ViewModels;
 using Voting_0._2.Data.Entities.Users;
 using Voting_0._2.Models.ViewModels.CreateModels;
 using Microsoft.AspNetCore.Identity;
+using Voting_0._2.Models.ViewModels.EditModel;
+using Voting_0._2.Models.ViewModels.DetailsModel;
 
-namespace Voting_0._2.Controllers
+namespace Voting_0._2.Controllers.SetUp_Voting
 {
     public class VotingController : Controller
     {
         private readonly VotingDbContext _dbContext;
         private readonly UserManager<Account> _userManager;
 
-        public VotingController(UserManager<Account> userManager ,VotingDbContext dbContext)
+        public VotingController(UserManager<Account> userManager, VotingDbContext dbContext)
         {
             _dbContext = dbContext;
             _userManager = userManager;
@@ -38,39 +40,95 @@ namespace Voting_0._2.Controllers
         }
 
 
+        // GET: Редагування голосування
         [HttpGet("{votingId}/edit")]
         [Authorize(Roles = Roles.Organizator)]
         public async Task<IActionResult> EditVoting(int votingId)
         {
-            var voting = await _dbContext.Votings.FindAsync(votingId);
+            var voting = await _dbContext.Votings
+                .Include(v => v.Candidates)
+                .FirstOrDefaultAsync(v => v.Id == votingId);
+
             if (voting == null) return NotFound();
 
-            return View(voting);
+            // Мапінг даних з Voting до VotingEditModel
+            var model = new VotingEditModel
+            {
+                Name = voting.Name,
+                VotingDuration = voting.VotingDuration,
+                AccessKey = voting.AccessKey,
+                NumberOfVoters = voting.NumberOfVoters,
+                Candidates = voting.Candidates.Select(c => new CandidateEditModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description
+                }).ToList()
+            };
+
+            return View(model);
         }
 
-
+        // POST: Збереження змін голосування
         [HttpPost("{votingId}/edit")]
         [Authorize(Roles = Roles.Organizator)]
-        public async Task<IActionResult> EditVoting(int votingId, Voting model)
+        public async Task<IActionResult> EditVoting(int votingId, VotingEditModel model)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
-            var voting = await _dbContext.Votings.FindAsync(votingId);
+            var voting = await _dbContext.Votings
+                .Include(v => v.Candidates)
+                .FirstOrDefaultAsync(v => v.Id == votingId);
+
             if (voting == null) return NotFound();
 
+            // Оновлюємо основні дані голосування
             voting.Name = model.Name;
             voting.VotingDuration = model.VotingDuration;
             voting.AccessKey = model.AccessKey;
             voting.NumberOfVoters = model.NumberOfVoters;
 
+            // Оновлюємо кандидатів
+            foreach (var candidateModel in model.Candidates)
+            {
+                var existingCandidate = voting.Candidates.FirstOrDefault(c => c.Id == candidateModel.Id);
+                if (existingCandidate != null)
+                {
+                    existingCandidate.Name = candidateModel.Name;
+                    existingCandidate.Description = candidateModel.Description;
+
+                    // Якщо кандидат має нове зображення
+                    if (candidateModel.ImageFile != null)
+                    {
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await candidateModel.ImageFile.CopyToAsync(memoryStream);
+                            existingCandidate.Image = new Image
+                            {
+                                ImageData = memoryStream.ToArray(),
+                                CandidatID = existingCandidate.Id
+                            };
+                        }
+                    }
+                }
+                else
+                {
+                    // Якщо кандидат новий, додаємо його
+                    voting.Candidates.Add(new Candidat
+                    {
+                        Name = candidateModel.Name,
+                        Description = candidateModel.Description
+                    });
+                }
+            }
+
             await _dbContext.SaveChangesAsync();
 
-            return RedirectToAction("GetVotings");
+            return RedirectToAction("GetVotings", "VotingController");
         }
-
 
         [HttpGet("{votingId}/delete")]
         [Authorize(Roles = Roles.Organizator)]
@@ -92,7 +150,7 @@ namespace Voting_0._2.Controllers
             _dbContext.Votings.Remove(voting);
             await _dbContext.SaveChangesAsync();
 
-            return RedirectToAction("GetVotings");
+            return RedirectToAction("GetVotings", "VotingController");
         }
 
 
@@ -127,7 +185,7 @@ namespace Voting_0._2.Controllers
             _dbContext.Votings.Add(voting);
             await _dbContext.SaveChangesAsync();
 
-            return RedirectToAction("GetVotings");
+            return RedirectToAction("GetVotings", "VotingController");
         }
 
         [HttpPost]
@@ -262,10 +320,36 @@ namespace Voting_0._2.Controllers
         [HttpGet("{votingId}")]
         public async Task<IActionResult> Details(int votingId)
         {
-            var voting = await _dbContext.Votings.Include(v => v.Candidates).FirstOrDefaultAsync(v => v.Id == votingId);
-            if (voting == null) return NotFound();
+            // Завантажуємо голосування з кандидатами
+            var voting = await _dbContext.Votings
+                .Include(v => v.Candidates)
+                .FirstOrDefaultAsync(v => v.Id == votingId);
 
-            return View(voting);
+            if (voting == null) return NotFound("Голосування не знайдено.");
+
+            // Мапимо дані на модель для перегляду деталей
+            var model = new VotingDetailsModel
+            {
+                Name = voting.Name,
+                VotingDuration = voting.VotingDuration,
+                AccessKey = voting.AccessKey,
+                NumberOfVoters = voting.NumberOfVoters,
+                Candidates = voting.Candidates.Select(c => new CandidateDetailsModel
+                {
+                    Name = c.Name,
+                    Description = c.Description,
+                    VoteCount = c.VoteCount,
+                    ImageUrl = c.Image != null ? ConvertImageToBase64(c.Image.ImageData) : null
+                }).ToList()
+            };
+
+            // Передаємо модель в представлення
+            return View(model);
+        }
+
+        private string ConvertImageToBase64(byte[] imageData)
+        {
+            return "data:image/png;base64," + Convert.ToBase64String(imageData);
         }
 
         // Сторінка для запуску голосування (тільки для Organizator)

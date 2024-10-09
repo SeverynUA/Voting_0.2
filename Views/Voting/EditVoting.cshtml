@@ -1,5 +1,7 @@
-﻿@using Voting_0._2.Models.Voting_m
-@model Voting
+﻿@using Voting_0._2.Models.ViewModels.EditModel
+@model VotingEditModel
+
+<script src="~/js/Edit_candidate-form-container.js"></script>
 
 <form asp-action="EditVoting" method="post">
     <div class="form-group">
@@ -21,6 +23,34 @@
         <label for="NumberOfVoters">Кількість виборців</label>
         <input type="number" class="form-control" id="NumberOfVoters" name="NumberOfVoters" value="@Model.NumberOfVoters" />
     </div>
+
+    <h3>Кандидати</h3>
+    <div id="candidate-form-container">
+        @for (int i = 0; i < Model.Candidates.Count; i++)
+        {
+            <div class="candidate-form-group" id="candidate-@i">
+                <h4>Кандидат @(i + 1)</h4>
+                <div class="form-group">
+                    <label>Ім'я кандидата</label>
+                    <input name="Candidates[@i].Name" class="form-control" value="@Model.Candidates[i].Name" />
+                </div>
+
+                <div class="form-group">
+                    <label>Опис кандидата</label>
+                    <input name="Candidates[@i].Description" class="form-control" value="@Model.Candidates[i].Description" />
+                </div>
+
+                <div class="form-group">
+                    <label>Зображення кандидата</label>
+                    <input type="file" name="Candidates[@i].ImageFile" class="form-control" />
+                </div>
+
+                <button type="button" class="btn btn-danger remove-candidate-btn" onclick="removeCandidate(@i)">Видалити кандидата</button>
+            </div>
+        }
+    </div>
+
+    <button type="button" id="add-candidate-btn" class="btn btn-primary mt-2">Додати кандидата</button>
 
     <button type="submit" class="btn btn-primary">Зберегти</button>
 </form>

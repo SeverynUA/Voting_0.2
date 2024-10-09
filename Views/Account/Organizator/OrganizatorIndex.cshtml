@@ -11,7 +11,7 @@
         <p><strong>Ім'я користувача:</strong> @Model.UserName</p>
         <p><strong>Ім'я користувача:</strong> @Model.FullName</p>
 
-        <a href="@Url.Action("EditAccountOrganizator", "OrganizatorAccount")" class="btn btn-primary">Редагувати профіль</a>
+        <a href="@Url.Action("EditAccountOrganizator", "Account")" class="btn btn-primary">Редагувати профіль</a>
 
         <form asp-action="Logout" method="post" class="mt-3">
             <button type="submit" class="btn btn-danger">Вийти з акаунту</button>

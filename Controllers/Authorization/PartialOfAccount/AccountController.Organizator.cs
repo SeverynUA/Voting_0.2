@@ -1,31 +1,21 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Voting_0._2.Data.Entities.Users;
 using Voting_0._2.Models.DTOs.Account;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authorization;
+using Voting_0._2.Models.Voting_m.Candidat_m;
+using Voting_0._2.Models.Voting_m.SetUp;
+using Voting_0._2.Models.Voting_m;
 
 namespace Voting_0._2.Controllers.Authorization
 {
-    [Route("OrganizatorAccount")]
-    public class OrganizatorAccountController : Controller
+    public partial class AccountController : Controller
     {
-        private readonly UserManager<Account> _userManager;
-        private readonly SignInManager<Account> _signInManager;
+        readonly string html_pathOrganizator = "~/Views/Account/Organizator/";
 
-        private readonly ILogger<OrganizatorAccountController> _logger;
-
-        public OrganizatorAccountController(UserManager<Account> userManager, SignInManager<Account> signInManager , ILogger<OrganizatorAccountController> logger)
-        {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = logger;
-        }
-
-        [Authorize]
-        [HttpGet]
-        [Route("Index")]
-        public async Task<IActionResult> Index()
+        [Authorize(Roles = Roles.Organizator)]
+        [HttpGet("Organizator/Index")]
+        public async Task<IActionResult> OrganizatorIndex()
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -33,24 +23,14 @@ namespace Voting_0._2.Controllers.Authorization
                 _logger.LogWarning("Користувача не знайдено.");
                 return NotFound("Користувача не знайдено.");
             }
-
-            if (!User.IsInRole("Organizator"))
-            {
-                _logger.LogWarning("Користувач не має ролі Організатора.");
-                return Forbid();
-            }
-
-            _logger.LogInformation("Користувач успішно увійшов з роллю Організатора.");
-
-            return View(user);
+            return View($"{html_pathOrganizator}OrganizatorIndex.cshtml", user);
         }
-
 
         // Сторінка реєстрації організатора
         [HttpGet("register-organizator")]
         public IActionResult RegisterOrganizator()
         {
-            return View();
+            return View($"{html_pathOrganizator}RegisterOrganizator.cshtml");
         }
 
         [HttpPost("register-organizator")]
@@ -66,8 +46,11 @@ namespace Voting_0._2.Controllers.Authorization
                     var roleResult = await _userManager.AddToRoleAsync(organizator, Roles.Organizator);
                     if (roleResult.Succeeded)
                     {
+                        // Логіка додавання тестових голосувань під час реєстрації організатора
+                        await AddTestVotingsForOrganizator(organizator);
+
                         // Після успішної реєстрації перенаправляємо на сторінку входу
-                        return RedirectToAction("Index", "OrganizatorAccount");
+                        return RedirectToAction("LoginOrganizator", "Account");
                     }
                     else
                     {
@@ -85,14 +68,57 @@ namespace Voting_0._2.Controllers.Authorization
                     }
                 }
             }
-            return View(model);
+            return View($"{html_pathOrganizator}RegisterOrganizator.cshtml" , model);
+        }
+
+        // Метод для додавання тестових голосувань
+        private async Task AddTestVotingsForOrganizator(Account organizator)
+        {
+            // Створення голосувань для організатора
+            var voting1 = new Voting
+            {
+                Name = "Вибори президента",
+                AccessKey = "PREZ2024",
+                VotingDuration = TimeSpan.FromHours(3),
+                NumberOfVoters = 2,
+                Organizator = organizator,
+                OrganizatorId = organizator.Id, // Прив'язка до зареєстрованого організатора
+                VotingSystem = new VotingSystem(VotingMode.Standard),
+                Candidates = new List<Candidat>
+            {
+                new Candidat { Name = "Кандидат 1", Description = "Опис кандидата 1", VoteCount = 0 },
+                new Candidat { Name = "Кандидат 2", Description = "Опис кандидата 2", VoteCount = 0 }
+            }
+            };
+
+            var voting2 = new Voting
+            {
+                Name = "Мер міста",
+                AccessKey = "MAYOR2024",
+                VotingDuration = TimeSpan.FromHours(2),
+                NumberOfVoters = null, // Відкрите голосування
+                Organizator = organizator,
+                OrganizatorId = organizator.Id,
+                VotingSystem = new VotingSystem(VotingMode.Elimination),
+                Candidates = new List<Candidat>
+            {
+                new Candidat { Name = "Кандидат A", Description = "Опис кандидата A", VoteCount = 0 },
+                new Candidat { Name = "Кандидат B", Description = "Опис кандидата B", VoteCount = 0 }
+            }
+            };
+
+            // Додаємо голосування до контексту
+            _dbContext.Votings.AddRange(voting1, voting2);
+
+            // Зберігаємо зміни в базі даних
+            await _dbContext.SaveChangesAsync();
         }
 
         // Сторінка входу для організатора
         [HttpGet("login-organizator")]
         public IActionResult LoginOrganizator()
         {
-            return View();
+            return View($"{html_pathOrganizator}LoginOrganizator.cshtml");
         }
 
         [HttpPost("login-organizator")]
@@ -104,11 +130,11 @@ namespace Voting_0._2.Controllers.Authorization
                 if (result.Succeeded)
                 {
                     // Після успішного входу перенаправляємо на головну сторінку організатора
-                    return RedirectToAction("Index", "OrganizatorAccount");
+                    return RedirectToAction("OrganizatorIndex", "Account");
                 }
                 ModelState.AddModelError(string.Empty, "Невірний логін або пароль");
             }
-            return View(model);
+            return View($"{html_pathOrganizator}LoginOrganizator.cshtml" , model);
         }
 
         // Сторінка редагування облікового запису організатора
@@ -116,7 +142,7 @@ namespace Voting_0._2.Controllers.Authorization
         [HttpGet("edit-account-organizator")]
         public IActionResult EditAccountOrganizator()
         {
-            return View();
+            return View($"{html_pathOrganizator}EditAccountOrganizator.cshtml");
         }
 
         [Authorize(Roles = Roles.Organizator)]
@@ -147,20 +173,20 @@ namespace Voting_0._2.Controllers.Authorization
                 }
             }
 
-            return RedirectToAction("LoginOrganizator", "OrganizatorAccount");
+            return RedirectToAction($"{html_pathOrganizator}OrganizatorIndex.cshtml", "OrganizatorAccount");
         }
 
         // Сторінка зміни пароля організатора
         [Authorize(Roles = Roles.Organizator)]
         [HttpGet("change-password-organizator")]
-        public IActionResult ChangePassword()
+        public IActionResult ChangePasswordOrganizator()
         {
-            return View(new ChangePasswordModel());
+            return View($"{html_pathOrganizator}ChangePasswordOrganizator.cshtml", new ChangePasswordModel());
         }
 
         [Authorize(Roles = Roles.Organizator)]
         [HttpPost("change-password-organizator")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+        public async Task<IActionResult> ChangePasswordOrganizator(ChangePasswordModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -168,13 +194,13 @@ namespace Voting_0._2.Controllers.Authorization
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
-                return RedirectToAction("LoginOrganizator", "OrganizatorAccount");
+                return RedirectToAction($"{html_pathOrganizator}LoginOrganizator.cshtml", "OrganizatorAccount");
             }
 
             var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             if (result.Succeeded)
             {
-                return RedirectToAction("Index", "OrganizatorAccount");
+                return RedirectToAction($"{html_pathOrganizator}OrganizatorIndex.cshtml", "OrganizatorAccount");
             }
 
             // Якщо зміна пароля не вдалася, виводимо помилки
@@ -184,15 +210,6 @@ namespace Voting_0._2.Controllers.Authorization
             }
 
             return View(model);
-        }
-
-        // Логаут
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
         }
     }
 }
